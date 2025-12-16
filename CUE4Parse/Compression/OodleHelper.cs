@@ -26,7 +26,19 @@ public class OodleException : ParserException
 public static class OodleHelper
 {
     public const string OODLE_DLL_NAME_OLD = "oo2core_9_win64.dll";
-    public const string OODLE_DLL_NAME = "oodle-data-shared.dll";
+    public const string BASE_OODLE_NAME = "oodle-data-shared";
+    private const string BASE_URL = "https://github.com/WorkingRobot/OodleUE/releases/download/2025-07-31-1001";
+
+#if WINDOWS
+	public const string OODLE_DLL_NAME = $"{BASE_OODLE_NAME}.dll";
+	private const string DOWNLOAD_URL = $"{BASE_URL}/clang-cl.zip";
+	private const string ENTRY_NAME = "bin/Release/oodle-data-shared.dll";
+#elif LINUX
+	public const string OODLE_DLL_NAME = $"{BASE_OODLE_NAME}.so";
+	private const string DOWNLOAD_URL = $"{BASE_URL}/clang.zip";
+	private const string ENTRY_NAME = "lib/Release/oodle-data-shared.so";
+#endif
+
 
     public static Oodle? Instance { get; private set; }
 
@@ -113,16 +125,13 @@ public static class OodleHelper
 
     public static async Task<bool> DownloadOodleDllFromOodleUEAsync(HttpClient client, string path)
     {
-        const string url = "https://github.com/WorkingRobot/OodleUE/releases/download/2025-07-31-1001/clang-cl.zip"; // 2.9.14
-        const string entryName = "bin/Release/oodle-data-shared.dll";
-
         try
         {
-            using var response = await client.GetAsync(url).ConfigureAwait(false);
+            using var response = await client.GetAsync(DOWNLOAD_URL).ConfigureAwait(false);
             response.EnsureSuccessStatusCode();
             await using var responseStream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
             using var zip = new ZipArchive(responseStream, ZipArchiveMode.Read);
-            var entry = zip.GetEntry(entryName);
+            var entry = zip.GetEntry(ENTRY_NAME);
             ArgumentNullException.ThrowIfNull(entry, "oodle entry in zip not found");
             await using var entryStream = entry.Open();
             await using var fs = File.Create(path);
