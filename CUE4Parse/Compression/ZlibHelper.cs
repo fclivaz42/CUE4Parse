@@ -23,7 +23,11 @@ public class ZlibException : ParserException
 public static class ZlibHelper
 {
     public const string DOWNLOAD_URL = "https://github.com/NotOfficer/Zlib-ng.NET/releases/download/1.0.0/zlib-ng2.dll";
+#if WINDOWS
     public const string DLL_NAME = "zlib-ng2.dll";
+#elif LINUX
+    public const string DLL_NAME = "/usr/lib/libz-ng.so";
+#endif
 
     public static Zlibng? Instance { get; private set; }
 

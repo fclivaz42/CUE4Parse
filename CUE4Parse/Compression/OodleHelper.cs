@@ -32,11 +32,11 @@ public static class OodleHelper
 #if WINDOWS
 	public const string OODLE_DLL_NAME = $"{BASE_OODLE_NAME}.dll";
 	private const string DOWNLOAD_URL = $"{BASE_URL}/clang-cl.zip";
-	private const string ENTRY_NAME = "bin/Release/oodle-data-shared.dll";
+	private const string ENTRY_NAME = $"bin/Release/{BASE_OODLE_NAME}.dll";
 #elif LINUX
-	public const string OODLE_DLL_NAME = $"{BASE_OODLE_NAME}.so";
+	public const string OODLE_DLL_NAME = $"lib{BASE_OODLE_NAME}.so";
 	private const string DOWNLOAD_URL = $"{BASE_URL}/clang.zip";
-	private const string ENTRY_NAME = "lib/Release/oodle-data-shared.so";
+	private const string ENTRY_NAME = $"lib/Release/lib{BASE_OODLE_NAME}.so";
 #endif
 
 
@@ -77,7 +77,7 @@ public static class OodleHelper
     }
 
     public static void Decompress(
-        byte[] compressed,   int compressedOffset,   int compressedSize,
+        byte[] compressed, int compressedOffset, int compressedSize,
         byte[] uncompressed, int uncompressedOffset, int uncompressedSize,
         FArchive? reader = null)
     {
